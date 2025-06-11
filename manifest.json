@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Blinker for Notifications",
+  "version": "1.0",
+  "description": "Blinks the tab title when a notification is detected on the page.",
+  "permissions": ["scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
