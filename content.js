@@ -1,40 +1,27 @@
-// === CONFIGURE THIS SELECTOR to match your notification element(s) ===
-const NOTIFICATION_SELECTOR = '.notification, .badge, [aria-label*="notification"]';
+document.addEventListener("DOMContentLoaded", () => {
+    const phrases = {
+        "Hold": "Ok please give me 5 minutes to review your reservation information",
+        "Confirm": "Your reservation is now confirmed. Let me know if you need anything else!",
+        "Delay": "Unfortunately, there is a delay in processing. We appreciate your patience!"
+    };
 
-let originalTitle = document.title;
-let blinkInterval = null;
-let blinkState = false;
+    const textarea = document.querySelector("textarea");
+    if (!textarea) return;
 
-function startBlinking() {
-  if (blinkInterval) return; // already blinking
-  blinkInterval = setInterval(() => {
-    document.title = blinkState ? "🔔 New Notification!" : originalTitle;
-    blinkState = !blinkState;
-  }, 1000);
-}
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.gap = "8px";
 
-function stopBlinking() {
-  if (blinkInterval) {
-    clearInterval(blinkInterval);
-    blinkInterval = null;
-    document.title = originalTitle;
-  }
-}
+    Object.keys(phrases).forEach(shortText => {
+        const button = document.createElement("button");
+        button.textContent = shortText;
+        button.style.padding = "5px";
+        button.style.cursor = "pointer";
+        button.addEventListener("click", () => {
+            textarea.value += ` ${phrases[shortText]}`;
+        });
+        container.appendChild(button);
+    });
 
-function checkForNotification() {
-  const notifEl = document.querySelector(NOTIFICATION_SELECTOR);
-  if (notifEl && notifEl.offsetParent !== null) {
-    startBlinking();
-  } else {
-    stopBlinking();
-  }
-}
-
-// Observe DOM changes for notification appearance/disappearance
-const observer = new MutationObserver(checkForNotification);
-observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-// Also check on page load
-window.addEventListener('DOMContentLoaded', checkForNotification);
-// For SPAs or AJAX sites, check periodically as fallback
-setInterval(checkForNotification, 5000);
+    textarea.parentNode.insertBefore(container, textarea);
+});
